@@ -1,14 +1,19 @@
-GPPPARAMS = -m32
+
+GPPPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-exceptions -fno-leading-underscore
 ASSPARAMS = --32
-objects = loader.0 kernel.o
-LDPARAMS = Mmelf_i386 
+objects = loader.o kernel.o
+LDPARAMS = -melf_i386
 
-%.0: %.cpp
-       g++ $(GPPPARAMS) -o $@ -c $<
-%.o:%.s
-     as $(ASSPARAMS) - O $<
+%.o: %.cpp
+	g++ $(GPPPARAMS) -c $< -o $@
 
-mylinker.bin: limker.ld $(objects)
-         ld $(LDPARAMS) - T $< -O $(objects)
-install: myke rnel.bin 
-         sudo cp $< /boot/mykenel.bin 
+%.o: %.s
+	as $(ASSPARAMS) -o $@ $<
+
+mykernel.bin: linker.ld $(objects)
+	ld $(LDPARAMS) -T $< -o $@ $(objects)
+
+install: mykernel.bin
+	sudo cp $< /boot/mykernel.bin
+
+.PHONY: install
